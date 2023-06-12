@@ -14,6 +14,13 @@ O e-book do treinamento pode ser acessado em [Ebook](https://rochacbruno.github.
 docker-compose up -d 
 ```
 
+### Parando container
+
+```bash
+docker-compose down
+```
+
+
 ### Acessar CLI no docker 
 
 ```bash
