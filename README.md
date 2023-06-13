@@ -20,11 +20,15 @@ docker-compose up -d
 docker-compose down
 ```
 
-
 ### Acessar CLI no docker 
 
 ```bash
-docker-compose exec api dundie
+docker-compose exec api dundie --help
+```
+### Logs da Api
+
+```bash
+docker-compose logs api --follow
 ```
 
 ### Comandos presentes na CLI
@@ -65,4 +69,19 @@ session.commit()
 
 ```bash
 curl --location 'http://localhost:8000/user' | jq
+```
+### Criandon usuario
+
+```bash
+curl -X 'POST' \
+  'http://localhost:8000/user/' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "name": "Ganso",
+  "email": "ganso@flu.com",
+  "dept": "Adm",
+  "password": "1231111",
+  "currency": "USD"
+}' | jq
 ```

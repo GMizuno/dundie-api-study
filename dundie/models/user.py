@@ -57,3 +57,7 @@ class UserRequest(BaseModel):
         if values.get("username") is None:
             values["username"] = generate_user(values["name"])
         return values
+
+def generate_username(name: str) -> str:
+    """Generates a slug username from a name"""
+    return name.lower().replace(" ", "-")
