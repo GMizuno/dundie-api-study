@@ -1,7 +1,5 @@
 from fastapi import FastAPI
-
-from dundie.routes.user import router as user_router
-
+from .routes import main_router
 
 app = FastAPI(
     title="dundie",
@@ -9,8 +7,4 @@ app = FastAPI(
     description='dundie is a reward API',
 )
 
-app.include_router(user_router, prefix="/user", tags=["user"])
-
-# @app.get("/", response_model=UserResponse)
-# def hello(session: Session = ActiveSession):
-#     return session.exec(select(User)).first()
+app.include_router(main_router)
