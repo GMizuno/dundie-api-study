@@ -116,7 +116,7 @@ def get_current_user(
     user = get_user(username=token_data.username)
     if user is None:
         raise credentials_exception
-    if fresh and (not payload["fresh"]   and not user.superuser):
+    if fresh and (not payload["fresh"] and not user.superuser):
         raise credentials_exception
 
     return user
@@ -132,6 +132,21 @@ async def get_current_active_user(
 
 
 AuthenticatedUser = Depends(get_current_active_user)
+
+async def get_current_super_user(
+        current_user: User = Depends(get_current_user),
+) -> User:
+    """Wraps the sync get_super_user for sync calls for superusers"""
+    if not current_user.superuser:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You are not a superuser, suck it!!!!!",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    return current_user
+
+
+SuperUser = Depends(get_current_super_user)
 
 
 async def validate_token(token: str = Depends(oauth2_scheme)) -> User:
