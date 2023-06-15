@@ -89,3 +89,27 @@ curl -X 'POST' \
   "currency": "USD"
 }' | jq
 ```
+
+```bash
+curl -X 'POST' -H 'Content-Type: application/json' \
+  --data-raw '{"email": "pam@dm.com", "dept": "Accounting", "password": "jimjim", "name": "Pam Besly"}' \
+  -k 'http://localhost:8000/user/'
+```
+
+### Criando Token
+
+```bash
+curl -X 'POST' \
+  'http://localhost:8000/token' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/x-www-form-urlencoded' \
+  -d 'username=pam-besly&password=jimjim' | jq
+```
+
+```bash
+curl -X 'POST' \
+  'http://localhost:8000/token' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/x-www-form-urlencoded' \
+  -d 'username=ganso&password=1231111' | jq
+```

@@ -1,7 +1,8 @@
 from datetime import timedelta, datetime
+from functools import partial
 from typing import Optional, Callable, Union
 
-from fastapi import HTTPException, Request, status
+from fastapi import HTTPException, Request, status, Depends
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, JWTError
 from pydantic import BaseModel
@@ -14,13 +15,13 @@ from dundie.security import verify_password
 
 ALGORITHM = settings.security.ALGORITHM
 SECRET_KEY = settings.security.SECRET_KEY
-oath2_scheme = OAuth2PasswordBearer(tokenUrl='token')
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl='token')
 
 
 # Models
 
 class Token(BaseModel):
-    acess_token: str
+    access_token: str
     refresh_token: str
     token_type: str
 
@@ -32,11 +33,12 @@ class RefreshToken(BaseModel):
 class TokenData(BaseModel):
     username: Optional[str] = None
 
+# Logic
 
-def create_acess_token(
+def create_access_token(
         data: dict,
         expires_delta: Optional[timedelta] = None,
-        scope: str = 'acess_token'
+        scope: str = 'access_token'
 ) -> str:
     """
     Creates a new access token for the user
@@ -52,14 +54,15 @@ def create_acess_token(
     )
     return encoded_jwt
 
+create_refresh_token = partial(create_access_token, scope="refresh_token")
 
-def autheticante_user(
+def authenticate_user(
         get_user: Callable,
         username: str,
         password: str,
 ) -> Union[User, bool]:
     """
-    Verifies if the user exist and password is corret
+    Verifies if the user exist and password is correct
     """
     user = get_user(username)
     if not user:
@@ -78,21 +81,60 @@ def get_user(username: str) -> Optional[User]:
         ).first()
 
 
-def get_current_user(token: str) -> User:
+def get_current_user(
+        token: str = Depends(oauth2_scheme),
+        request: Request = None,  # pyright: ignore
+        fresh=False
+) -> User:
+    """Get current user authenticated"""
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+
+    if request:
+        if authorization := request.headers.get("authorization"):
+            try:
+                token = authorization.split(" ")[1]
+            except IndexError:
+                raise credentials_exception
+
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        username = payload.get('sub')
+        payload = jwt.decode(
+            token,
+            SECRET_KEY,
+            algorithms=[ALGORITHM]
+        )
+        username: str = payload.get("sub")
+
         if username is None:
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, headers={"WWW-Authenticate": "Bearer"})
-        token_data = TokenData(username=username) # Serialize the data, could diferent
+            raise credentials_exception
+        token_data = TokenData(username=username)
     except JWTError:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, headers={"WWW-Authenticate": "Bearer"})
+        raise credentials_exception
     user = get_user(username=token_data.username)
     if user is None:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, headers={"WWW-Authenticate": "Bearer"})
+        raise credentials_exception
+    if fresh and (not payload["fresh"]   and not user.superuser):
+        raise credentials_exception
+
     return user
 
+# FastAPI dependencies
 
-async def validate_token(token: str) -> User:
+
+async def get_current_active_user(
+        current_user: User = Depends(get_current_user),
+) -> User:
+    """Wraps the sync get_active_user for sync calls"""
+    return current_user
+
+
+AuthenticatedUser = Depends(get_current_active_user)
+
+
+async def validate_token(token: str = Depends(oauth2_scheme)) -> User:
+    """Validates user token"""
     user = get_current_user(token=token)
     return user
