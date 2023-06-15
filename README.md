@@ -23,8 +23,12 @@ docker-compose down
 ### Acessar CLI no docker 
 
 ```bash
+docker-compose exec api dundie shell
+```
+```bash
 docker-compose exec api dundie --help
 ```
+
 ### Logs da Api
 
 ```bash
