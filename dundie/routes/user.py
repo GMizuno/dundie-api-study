@@ -5,7 +5,7 @@ from sqlmodel import select, Session
 
 from dundie.db import ActiveSession
 from dundie.models import User
-from dundie.models.user import UserResponse, UserRequest
+from dundie.models.user import UserResponse, UserRequest, UserProfilePatchRequest
 from dundie.auth import AuthenticatedUser, SuperUser
 from sqlalchemy.exc import IntegrityError
 
@@ -46,3 +46,30 @@ async def get_user_by_username(*, session: Session = ActiveSession, username: st
 async def get_user_by_username(*, session: Session = ActiveSession, username: str):
     """Delete user by username"""
     pass
+
+@router.patch("/{username}", response_model=UserProfilePatchRequest, dependencies=[SuperUser])
+async def update_avatar_by_username(*, session: Session = ActiveSession, username: str):
+    """Update user avatar"""
+    pass
+
+@router.patch("/{username}/", response_model=UserResponse)
+async def update_user(
+        *,
+        session: Session = ActiveSession,
+        patch_data: UserProfilePatchRequest,
+        current_user: User = AuthenticatedUser,
+        username: str
+):
+    user = session.exec(select(User).where(User.username == username)).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    if user.id != current_user.id and not current_user.superuser:
+        raise HTTPException(status_code=403, detail="You can only update your own profile")
+
+    user.avatar = patch_data.avatar
+    user.bio = patch_data.bio
+
+    session.add(user)
+    session.commit()
+    session.refresh(user)
+    return user

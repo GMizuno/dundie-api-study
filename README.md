@@ -113,5 +113,15 @@ curl -X 'POST' \
   'http://localhost:8000/token' \
   -H 'accept: application/json' \
   -H 'Content-Type: application/x-www-form-urlencoded' \
-  -d 'username=ganso&password=1231111' | jq
+  -d 'username=mizuno&password=1234' | jq
+```
+
+### Atualizando dados de profile 
+
+```bash
+curl -X 'PATCH' \
+ -H 'Authorization: Bearer ...' \
+ -H 'Content-Type: application/json' 
+ --data-raw '{"avatar": "https://test.com/MichaelScott.png", "bio": "I am the boss"}' \
+ -k 'http://localhost:8000/user/pam-besly/'
 ```

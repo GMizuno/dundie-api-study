@@ -58,6 +58,12 @@ class UserRequest(BaseModel):
             values["username"] = generate_user(values["name"])
         return values
 
+class UserProfilePatchRequest(BaseModel):
+    """Serializer for when cliente wants to partially update the user profile"""
+    avatar: Optional[str]
+    bio: Optional[str]
+
+
 def generate_username(name: str) -> str:
     """Generates a slug username from a name"""
     return name.lower().replace(" ", "-")
