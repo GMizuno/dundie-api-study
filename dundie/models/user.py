@@ -3,7 +3,7 @@ from typing import Optional
 from sqlmodel import Field, SQLModel
 from dundie.security import HashedPassword
 from pydantic import BaseModel, root_validator
-
+from fastapi import HTTPException
 
 class User(SQLModel, table=True):
     """Represents the User Model, can connect to the database using ORM"""
@@ -62,6 +62,12 @@ class UserProfilePatchRequest(BaseModel):
     """Serializer for when cliente wants to partially update the user profile"""
     avatar: Optional[str]
     bio: Optional[str]
+
+    @root_validator(pre=True)
+    def ensure_values(cls, values):
+        if not values:
+            raise HTTPException(status_code=400, detail="No data provided")
+        return values
 
 
 def generate_username(name: str) -> str:

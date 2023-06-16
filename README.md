@@ -2,7 +2,8 @@
 
 Este projeto é parte do treinamento Python Web API da LINUXtips. https://linuxtips.io
 
-Este material serve de apoio para as aulas em video.
+Este material serve de apoio para as aulas em video. Alguns desses comandos podem conter erros, pois no momento da execução 
+não tinha Token (via JWT) para autenticar o usuario, quando tiver tempo atualizarei esses comandos.
 
 O e-book do treinamento pode ser acessado em [Ebook](https://rochacbruno.github.io/dundie-api/)
 
@@ -118,10 +119,30 @@ curl -X 'POST' \
 
 ### Atualizando dados de profile 
 
+Usando Swagger com usuario mizuno
+
 ```bash
 curl -X 'PATCH' \
- -H 'Authorization: Bearer ...' \
- -H 'Content-Type: application/json' 
- --data-raw '{"avatar": "https://test.com/MichaelScott.png", "bio": "I am the boss"}' \
- -k 'http://localhost:8000/user/pam-besly/'
+  'http://localhost:8000/user/pam-besly/?fresh=false' \
+  -H 'accept: application/json' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtaXp1bm8iLCJmcmVzaCI6dHJ1ZSwiZXhwIjoxNjg2OTUxMzc0LCJzY29wZSI6ImFjY2Vzc190b2tlbiJ9.GWoHCUbfK_kilIYEEPUqd-_66OalgqV9V2MtElacSok' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "avatar": "https://test.com/pam.png",
+  "bio": "I am the boss"
+}'
+```
+
+Usando Swagger com usuario ganso
+
+```bash
+curl -X 'PATCH' \
+  'http://localhost:8000/user/pam-besly/?fresh=false' \
+  -H 'accept: application/json' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJnYW5zbyIsImZyZXNoIjp0cnVlLCJleHAiOjE2ODY5NTEzMzcsInNjb3BlIjoiYWNjZXNzX3Rva2VuIn0.9zPSKxLO0W8ejLfOz_PuXVvLQgP9Xoh6tKf5u2AnA2E' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "avatar": "https://test.com/pam.png",
+  "bio": "I am the boss"
+}'
 ```
