@@ -76,6 +76,8 @@ curl --location 'http://localhost:8000/user' | jq
 ```
 ### Criandon usuario
 
+Tem que incluir token de acesso
+
 ```bash
 curl -X 'POST' \
   'http://localhost:8000/user/' \

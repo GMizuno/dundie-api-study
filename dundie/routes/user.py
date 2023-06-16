@@ -1,12 +1,13 @@
 from typing import List
 
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from sqlmodel import select, Session
 
 from dundie.db import ActiveSession
 from dundie.models import User
 from dundie.models.user import UserResponse, UserRequest
 from dundie.auth import AuthenticatedUser, SuperUser
+from sqlalchemy.exc import IntegrityError
 
 router = APIRouter()
 
@@ -21,9 +22,16 @@ async def list_user(*, session: Session = ActiveSession):
 @router.post("/", response_model=UserRequest, status_code=201, dependencies=[SuperUser])
 async def create_user(*, session: Session = ActiveSession, user: UserRequest):
     """Creates new user"""
+    # Podeira usar um if para verificar se o usuário e email já existem
     db_user = User.from_orm(user)
     session.add(db_user)
-    session.commit()
+    try:
+        session.commit()
+    except IntegrityError:
+        raise HTTPException(
+            status_code=500,
+            detail="User already exists"
+        )
     session.refresh(db_user) # Retorna o objeto atualizado para db_user
     return db_user
 
