@@ -5,7 +5,7 @@ from sqlmodel import Session, select
 
 from .config import settings
 from .db import engine
-from .models import User
+from .models import User, Transaction, Balance
 from dundie.models.user import generate_username
 
 main = typer.Typer(name="dundie CLI", add_completion=False)
@@ -20,6 +20,8 @@ def shell():
         "select": select,
         "session": Session(engine),
         "User": User,
+        "Transaction": Transaction,
+        "Balance": Balance,
     }
     typer.echo(f"Auto imports: {list(_vars.keys())}")
     typer.echo('Hello Dunder Mifflin employers')
@@ -64,7 +66,7 @@ def create_user(
         user = User(
             name=name,
             email=email,
-            password=password,  # pyright: ignore
+            password=password,
             dept=dept,
             username=username or generate_username(name),
             currency=currency,
@@ -74,3 +76,18 @@ def create_user(
         session.refresh(user)
         typer.echo(f"created {user.username} user")
         return user
+
+@main.command()
+def create_user_from_csv():
+    """Create user from csv. NOT IMPLEMENTED YET"""
+    pass
+
+@main.command()
+def export_user_to_csv():
+    """Export all user to csv file. NOT IMPLEMENTED YET"""
+    pass
+
+@main.command()
+def export_transaction_to_csv():
+    """Export all transaction to csv file. NOT IMPLEMENTED YET"""
+    pass

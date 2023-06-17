@@ -1,6 +1,6 @@
 # Projeto Dundie API - LINUXtips
 
-Este projeto é parte do treinamento Python Web API da LINUXtips. https://linuxtips.io
+Este projeto é parte do treinamento Python Web API da [LinuxTips](https://linuxtips.io)
 
 Este material serve de apoio para as aulas em video. Alguns desses comandos podem conter erros, pois no momento da execução 
 não tinha Token (via JWT) para autenticar o usuario, quando tiver tempo atualizarei esses comandos.
