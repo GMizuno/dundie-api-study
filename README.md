@@ -146,3 +146,19 @@ curl -X 'PATCH' \
   "bio": "I am the boss"
 }'
 ```
+
+### Resetando password
+
+```bash
+curl -X 'POST' \
+'http://localhost:8000/user/pam-besly/password/' \
+ -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtaXp1bm8iLCJmcmVzaCI6dHJ1ZSwiZXhwIjoxNjg2OTU0NzI4LCJzY29wZSI6ImFjY2Vzc190b2tlbiJ9.ujfmX3kRdA070I7oDy_RuHgK10m1DQPk7-1K8M5B6to' \
+ -H 'Content-Type: application/json'  \
+ -d '{"password": "234551231313213", "password_confirm": "234551231313213"}' | jq
+```
+
+Note que o hashs mudaram
+
+Antigo - $2b$12$GrY0qZhLOF/Y.rBDz4Nnmu19JGHSBTGzyGmOdY3CZZ9BE5l2UJvZW
+
+Novo - $2b$12$M4Wia32V9PO/eDoWDkQKCO1T2ViyMxzBdyy9TFRyyqSdSnHSPrGRC

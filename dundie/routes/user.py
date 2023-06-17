@@ -1,13 +1,22 @@
 from typing import List
 
 from fastapi import APIRouter, HTTPException
+from sqlalchemy.exc import IntegrityError
 from sqlmodel import select, Session
 
+from dundie.auth import (
+    AuthenticatedUser,
+    SuperUser,
+    CanChangeUserPassword
+)
 from dundie.db import ActiveSession
 from dundie.models import User
-from dundie.models.user import UserResponse, UserRequest, UserProfilePatchRequest
-from dundie.auth import AuthenticatedUser, SuperUser
-from sqlalchemy.exc import IntegrityError
+from dundie.models.user import (
+    UserResponse,
+    UserRequest,
+    UserProfilePatchRequest,
+    UserPasswordPatchRequest
+)
 
 router = APIRouter()
 
@@ -47,11 +56,6 @@ async def get_user_by_username(*, session: Session = ActiveSession, username: st
     """Delete user by username"""
     pass
 
-@router.patch("/{username}", response_model=UserProfilePatchRequest, dependencies=[SuperUser])
-async def update_avatar_by_username(*, session: Session = ActiveSession, username: str):
-    """Update user avatar"""
-    pass
-
 @router.patch("/{username}/", response_model=UserResponse)
 async def update_user(
         *,
@@ -69,6 +73,20 @@ async def update_user(
     user.avatar = patch_data.avatar
     user.bio = patch_data.bio
 
+    session.add(user)
+    session.commit()
+    session.refresh(user)
+    return user
+
+
+@router.post("/{username}/password/", response_model=UserResponse)
+async def change_password(
+        *,
+        session: Session = ActiveSession,
+        patch_data: UserPasswordPatchRequest,
+        user: User = CanChangeUserPassword
+):
+    user.password = patch_data.hashed_password  # pyright: ignore
     session.add(user)
     session.commit()
     session.refresh(user)
