@@ -162,3 +162,25 @@ Note que o hashs mudaram
 Antigo - $2b$12$GrY0qZhLOF/Y.rBDz4Nnmu19JGHSBTGzyGmOdY3CZZ9BE5l2UJvZW
 
 Novo - $2b$12$M4Wia32V9PO/eDoWDkQKCO1T2ViyMxzBdyy9TFRyyqSdSnHSPrGRC
+
+### Esqueci senha
+
+```bash
+docker-compose exec api dundie shell
+```
+
+```bash
+from dundie.tasks.user import try_to_send_pwd_reset_email
+
+try_to_send_pwd_reset_email('pam@dm.com')
+```
+
+Procure na raiz do projeto um arquivo email.log
+
+```bash
+curl -X 'POST' \
+'http://localhost:8000/user/pam-besly/password/?pwd_reset_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJwYW0tYmVzbHkiLCJleHAiOjE2ODcwMDg1OTMsInNjb3BlIjoicHdkX3Jlc2V0In0.pAi4apawiBsFu5XQWaic-i0AxAbq2B8OGaeOLhVyYKw' \
+ -H 'Content-Type: application/json'  \
+ -d '{"password": "234551231313213", "password_confirm": "234551231313213"}' | jq
+```
+
