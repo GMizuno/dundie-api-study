@@ -169,7 +169,7 @@ Novo - $2b$12$M4Wia32V9PO/eDoWDkQKCO1T2ViyMxzBdyy9TFRyyqSdSnHSPrGRC
 docker-compose exec api dundie shell
 ```
 
-```bash
+```python
 from dundie.tasks.user import try_to_send_pwd_reset_email
 
 try_to_send_pwd_reset_email('pam@dm.com')
@@ -184,3 +184,34 @@ curl -X 'POST' \
  -d '{"password": "234551231313213", "password_confirm": "234551231313213"}' | jq
 ```
 
+### Transaction
+
+Testando antes de implementar CLI/API
+
+```bash
+docker-compose exec api dundie shell
+```
+
+```python
+from dundie.tasks.transaction import add_transaction
+
+mizuno = session.exec(select(User).where(User.username == 'mizuno')).first()
+ganso = session.exec(select(User).where(User.username == 'ganso')).first()
+pam = session.exec(select(User).where(User.username == 'pam-besly')).first()
+
+add_transaction(user=ganso, from_user=mizuno, value=100, session=session)
+add_transaction(user=pam, from_user=mizuno, value=32111, session=session)
+
+session.exec(select(Transaction)).all()
+session.exec(select(Balance)).all()
+```
+
+OBS: Certifique-se que Transaction e Balance foram importadas !!!!!!!
+
+Usando a CLI para realizar a transaction
+
+```bash
+docker-compose exec api dundie transaction german-cano 200
+```
+
+Note que so será possível fazer transaction com usuario admin.
