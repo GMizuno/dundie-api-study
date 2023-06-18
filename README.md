@@ -56,7 +56,8 @@ session.commit()
 OBS: usar comando dundie shell
 
 ```python
-from dundie.models.user import UserRequest
+
+from dundie.models.serializers import UserRequest
 
 new = UserRequest(
     name="German Cano",
@@ -159,9 +160,9 @@ curl -X 'POST' \
 
 Note que o hashs mudaram
 
-Antigo - $2b$12$GrY0qZhLOF/Y.rBDz4Nnmu19JGHSBTGzyGmOdY3CZZ9BE5l2UJvZW
+Antigo - _$2b$12$GrY0qZhLOF/Y.rBDz4Nnmu19JGHSBTGzyGmOdY3CZZ9BE5l2UJvZW_
 
-Novo - $2b$12$M4Wia32V9PO/eDoWDkQKCO1T2ViyMxzBdyy9TFRyyqSdSnHSPrGRC
+Novo - _$2b$12$M4Wia32V9PO/eDoWDkQKCO1T2ViyMxzBdyy9TFRyyqSdSnHSPrGRC_
 
 ### Esqueci senha
 
@@ -213,5 +214,37 @@ Usando a CLI para realizar a transaction
 ```bash
 docker-compose exec api dundie transaction german-cano 200
 ```
-
 Note que so será possível fazer transaction com usuario admin.
+
+### Listando transactions
+
+```bash
+curl -sX 'GET' \
+  'http://localhost:8000/transaction/?fresh=false' \
+  -H 'accept: application/json' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtaXp1bm8iLCJmcmVzaCI6dHJ1ZSwiZXhwIjoxNjg3MDk2MDc2LCJzY29wZSI6ImFjY2Vzc190b2tlbiJ9.QF0eHtph2QolumQalZL-Dnw6pxHZZYIounPEkqSD7bo' | jq
+```
+Paginando a transaction com _fastapi-pagination_
+
+```bash
+curl -X 'GET' \
+  'http://localhost:8000/transaction/?fresh=false&page=2&size=2' \
+  -H 'accept: application/json' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtaXp1bm8iLCJmcmVzaCI6dHJ1ZSwiZXhwIjoxNjg3MDk2Nzk5LCJzY29wZSI6ImFjY2Vzc190b2tlbiJ9.mCc1aDAhIDBpHH0krcV6237Soeqx-vHI-H8shSQBSg8' | jq
+```
+
+Logando com um usario sem ser _superuser_. É possível ver todas as transactions, para resolver isso vamos usar filtros !!!!!!
+```bash
+curl -sX 'GET' \
+  'http://localhost:8000/transaction/?fresh=false&page=1&size=50' \
+  -H 'accept: application/json' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJwYW0tYmVzbHkiLCJmcmVzaCI6dHJ1ZSwiZXhwIjoxNjg3MDk3ODIxLCJzY29wZSI6ImFjY2Vzc190b2tlbiJ9.PChKDUUBEc0OE3eht-cWO8QSsApCIbPaUDvzdZ3YMjE' | jq
+```
+Com todos os filtros 
+
+```bash
+curl -X 'GET' \
+  'http://localhost:8000/transaction/?user=german-cano&order_by=date&fresh=false&page=1&size=50' \
+  -H 'accept: application/json' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtaXp1bm8iLCJmcmVzaCI6dHJ1ZSwiZXhwIjoxNjg3MDk4NTMzLCJzY29wZSI6ImFjY2Vzc190b2tlbiJ9.YmWyde9nYTkuZJiPXxGiYfPZV-mhz1bzxp9XZNU9wf4' | jq
+```

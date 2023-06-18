@@ -11,12 +11,7 @@ from dundie.auth import (
 )
 from dundie.db import ActiveSession
 from dundie.models import User
-from dundie.models.user import (
-    UserResponse,
-    UserRequest,
-    UserProfilePatchRequest,
-    UserPasswordPatchRequest
-)
+from dundie.models.serializers import UserResponse, UserRequest, UserProfilePatchRequest, UserPasswordPatchRequest
 from dundie.tasks.user import try_to_send_pwd_reset_email
 
 router = APIRouter()
