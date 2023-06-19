@@ -1,11 +1,11 @@
 from datetime import datetime
 from typing import Optional
 
+from fastapi import HTTPException, status
 from pydantic import BaseModel, root_validator
 from sqlmodel import Session
 
 from dundie.db import engine
-
 from .user import User, generate_user
 from ..security import get_password_hash
 
@@ -93,3 +93,14 @@ class UserPasswordPatchRequest(BaseModel):
     def hashed_password(self) -> str:
         """Returns hashed password"""
         return get_password_hash(self.password)
+
+
+class UserResponseWithBalance(UserResponse):
+    balance: Optional[int] = None
+
+    @root_validator(pre=True)
+    def set_balance(cls, values: dict):
+        """Sets the balance of the user"""
+        instance = values["_sa_instance_state"].object # Poderia fazer um query com session, mas essa instancia ja tem o dados necessários.
+        values["balance"] = instance.balance
+        return values

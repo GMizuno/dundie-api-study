@@ -11,16 +11,38 @@ from dundie.auth import (
 )
 from dundie.db import ActiveSession
 from dundie.models import User
-from dundie.models.serializers import UserResponse, UserRequest, UserProfilePatchRequest, UserPasswordPatchRequest
+from dundie.models.serializers import (
+    UserResponse,
+    UserRequest,
+    UserProfilePatchRequest,
+    UserPasswordPatchRequest,
+    UserResponseWithBalance,
+)
 from dundie.tasks.user import try_to_send_pwd_reset_email
+from fastapi.encoders import jsonable_encoder
+from fastapi.responses import JSONResponse
+from pydantic import parse_obj_as
+from dundie.auth import ShowBalanceField
 
 router = APIRouter()
 
 
-@router.get("/", response_model=List[UserResponse], dependencies=[AuthenticatedUser])
-async def list_user(*, session: Session = ActiveSession):
+@router.get(
+    "/",
+    response_model=List[UserResponse] | List[UserResponseWithBalance],
+    response_model_exclude_unset=True,
+)
+async def list_user(
+        *,
+        session: Session = ActiveSession,
+        show_balance_field: bool = ShowBalanceField,
+):
     """List all users in the database."""
     users = session.exec(select(User)).all()
+    # TODO pagination
+    if show_balance_field:
+        users = parse_obj_as(List[UserResponseWithBalance], users)
+        return JSONResponse(jsonable_encoder(users))
     return users
 
 
@@ -40,10 +62,22 @@ async def create_user(*, session: Session = ActiveSession, user: UserRequest):
     session.refresh(db_user) # Retorna o objeto atualizado para db_user
     return db_user
 
-@router.get("/{username}", response_model=UserResponse)
-async def get_user_by_username(*, session: Session = ActiveSession, username: str):
+@router.get(
+    "/{username}/",
+    response_model=UserResponse | UserResponseWithBalance,
+    response_model_exclude_unset=True,
+)
+async def get_user_by_username(
+        *, session: Session = ActiveSession, username: str, show_balance_field: bool = ShowBalanceField
+):
     """Get user by username"""
-    user = session.exec(select(User).where(User.username == username)).first()
+    query = select(User).where(User.username == username)
+    user = session.exec(query).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    if show_balance_field:
+        user_with_balance = parse_obj_as(UserResponseWithBalance, user)
+        return JSONResponse(jsonable_encoder(user_with_balance))
     return user
 
 #TODO: Delete user

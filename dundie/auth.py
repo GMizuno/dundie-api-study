@@ -113,12 +113,12 @@ def get_current_user(
         token_data = TokenData(username=username)
     except JWTError:
         raise credentials_exception
+
     user = get_user(username=token_data.username)
     if user is None:
         raise credentials_exception
     if fresh and (not payload["fresh"] and not user.superuser):
         raise credentials_exception
-
     return user
 
 # FastAPI dependencies
@@ -195,3 +195,37 @@ async def get_user_if_change_password_is_allowed(
 
 
 CanChangeUserPassword = Depends(get_user_if_change_password_is_allowed)
+
+
+async def show_balance_field(
+        *,
+        request: Request,
+        show_balance: Optional[bool] = False,  # from /user/?show_balance=true
+) -> bool:
+    """Returns True if one of the conditions is met.
+    1. show_balance is True AND
+    2. authenticated_user.superuser OR
+    3. authenticated_user.username == username
+    """
+    if not show_balance:
+        return False
+
+    username = request.path_params.get("username")
+
+    try:
+        authenticated_user = get_current_user(token="", request=request)
+    except HTTPException:
+        authenticated_user = None
+
+    if any(
+            [
+                authenticated_user and authenticated_user.superuser,
+                authenticated_user and authenticated_user.username == username,
+            ]
+    ):
+        return True
+
+    return False
+
+
+ShowBalanceField = Depends(show_balance_field)
