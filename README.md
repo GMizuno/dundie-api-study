@@ -271,3 +271,10 @@ curl -sX 'GET' \
   -H 'accept: application/json' \
   -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtaXp1bm8iLCJmcmVzaCI6dHJ1ZSwiZXhwIjoxNjg3MTAzODAxLCJzY29wZSI6ImFjY2Vzc190b2tlbiJ9.yZ6BqVdPZuVFDAhx4snjfogP51nBog3o-8Ycg3xrKhw' | jq
 ```
+
+### Resentando banco de dados
+
+
+```bash
+docker-compose exec api dundie reset-db
+```

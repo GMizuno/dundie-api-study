@@ -3,10 +3,10 @@ from rich.console import Console
 from rich.table import Table
 from sqlmodel import Session, select
 
-from .config import settings
-from .db import engine
-from .models import User, Transaction, Balance
 from dundie.models.user import generate_username
+from .config import settings
+from .db import engine, SQLModel
+from .models import User, Transaction, Balance
 from .tasks.transaction import add_transaction
 
 main = typer.Typer(name="dundie CLI", add_completion=False)
@@ -120,12 +120,26 @@ def create_user_from_csv():
     """Create user from csv. NOT IMPLEMENTED YET"""
     pass
 
+
 @main.command()
 def export_user_to_csv():
     """Export all user to csv file. NOT IMPLEMENTED YET"""
     pass
 
+
 @main.command()
 def export_transaction_to_csv():
     """Export all transaction to csv file. NOT IMPLEMENTED YET"""
     pass
+
+
+@main.command()
+def reset_db(
+        force: bool = typer.Option(
+            False, "--force", "-f", help="Run with no confirmation"
+        )
+):
+    """Resets the database tables"""
+    force = force or typer.confirm("Are you sure?")
+    if force:
+        SQLModel.metadata.drop_all(engine)
