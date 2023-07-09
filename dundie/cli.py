@@ -53,6 +53,7 @@ def user_list():
 
     Console().print(table)
 
+
 @main.command()
 def create_user(
         name: str,
@@ -81,7 +82,28 @@ def create_user(
 @main.command()
 def balance_list():
     """List balances of all users. NOT IMPLEMENTED YET"""
-    pass
+    query = select(User.name, Balance).join(User, Balance.user_id == User.id)
+
+    table = Table(title="User balances")
+    fields = ["name", "updated_at", "value", "user_id"]
+
+    table.add_column("name", style="blue")
+    for header in fields[1:]:
+        table.add_column(header, style="red")
+
+
+
+    with Session(engine) as session:
+        balance_list = session.exec(query)
+        for balance in balance_list:
+            _balance = [
+                getattr(balance, 'name'),
+                str(getattr(balance[1], "updated_at")),
+                str(getattr(balance[1], "value")),
+                str(getattr(balance[1], "user_id")),
+            ]
+            table.add_row(*_balance)
+        Console().print(table)
 
 @main.command()
 def transaction(
@@ -114,17 +136,21 @@ def transaction(
         Console().print(table)
 
 
-
 @main.command()
 def create_user_from_csv():
     """Create user from csv. NOT IMPLEMENTED YET"""
     pass
-
-
 @main.command()
-def export_user_to_csv():
+def export_user_to_csv(path: str = '.'):
     """Export all user to csv file. NOT IMPLEMENTED YET"""
-    pass
+    with Session(engine) as session:
+        query = select(User.email, User.name, User.username, User.dept, User.currency)
+        users = session.exec(query).all()
+        records = [i.dict() for i in users]
+        df = pd.DataFrame.from_records(records)
+        path = path + '/users.csv'
+        df.to_csv(path_or_buf=path, index=False)
+
 
 
 @main.command()

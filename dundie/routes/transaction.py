@@ -1,15 +1,30 @@
 from typing import Optional
 
-from fastapi import APIRouter, Body, HTTPException, Depends
-from fastapi_pagination import Page, Params
+from fastapi import (
+    APIRouter,
+    Body,
+    HTTPException,
+    Depends
+)
+from fastapi_pagination import (
+    Page,
+    Params
+)
 from fastapi_pagination.ext.sqlmodel import paginate
-from sqlmodel import select, Session, text
+from sqlmodel import (
+    select,
+    Session,
+    text
+)
 
 from dundie.auth import AuthenticatedUser
 from dundie.db import ActiveSession
 from dundie.models import User, Transaction
 from dundie.models.serializers import TransactionResponse
-from dundie.tasks.transaction import add_transaction, TransactionError
+from dundie.tasks.transaction import (
+    add_transaction,
+    TransactionError
+)
 from sqlalchemy.orm import aliased
 
 router = APIRouter()
@@ -50,10 +65,14 @@ async def list_transactions(
     query = select(Transaction)
 
     if user:
-        query = query.join(User, Transaction.user_id == User.id).where(User.username == user)
+        query = query.\
+            join(User, Transaction.user_id == User.id).\
+            where(User.username == user)
     if from_user:
         FromUser = aliased(User)
-        query = query.join(FromUser, Transaction.from_id == FromUser.id).where(FromUser.username == user)
+        query = query.\
+            join(FromUser, Transaction.from_id == FromUser.id).\
+            where(FromUser.username == user)
 
     if not current_user.superuser:
         query = query.where(

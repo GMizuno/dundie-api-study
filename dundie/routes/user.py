@@ -1,6 +1,11 @@
 from typing import List
 
-from fastapi import APIRouter, HTTPException, Body
+from fastapi import (
+    APIRouter,
+    HTTPException,
+    Body,
+    Depends
+)
 from sqlalchemy.exc import IntegrityError
 from sqlmodel import select, Session
 
@@ -9,6 +14,12 @@ from dundie.auth import (
     SuperUser,
     CanChangeUserPassword
 )
+from fastapi_pagination import (
+    Page,
+    Params
+)
+from fastapi_pagination.ext.sqlmodel import paginate
+
 from dundie.db import ActiveSession
 from dundie.models import User
 from dundie.models.serializers import (
@@ -26,7 +37,7 @@ from dundie.auth import ShowBalanceField
 
 router = APIRouter()
 
-
+# TODO pagination
 @router.get(
     "/",
     response_model=List[UserResponse] | List[UserResponseWithBalance],
@@ -82,7 +93,7 @@ async def get_user_by_username(
 
 #TODO: Delete user
 @router.post("/delete/{username}")
-async def get_user_by_username(*, session: Session = ActiveSession, username: str):
+async def delete_user_by_username(*, session: Session = ActiveSession, username: str):
     """Delete user by username"""
     pass
 

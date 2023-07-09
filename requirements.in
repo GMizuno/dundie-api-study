@@ -11,3 +11,4 @@ psycopg2                   # Database Driver
 alembic                    # Database Migrations
 rich                       # Terminal formatting
 fastapi-pagination         # Pagination
+pandas                     # Export to CSV
