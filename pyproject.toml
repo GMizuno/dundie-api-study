@@ -2,7 +2,7 @@
 name = "dundie"
 description = "Rewards API for Dunder Mifflin"
 authors = [
-    {name = 'Gabriel Mizuno', email = 'gabrielmizuno@gmail.com'},
+	{name = 'Bruno Rocha', email = 'rochacbruno@gmail.com'},
 ]
 requires-python = ">=3.8"
 license = {text = "MIT"}

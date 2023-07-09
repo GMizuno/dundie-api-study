@@ -51,7 +51,10 @@ async def create_transaction(
     return {"message": "Transaction added"}
 
 
-@router.get('/', response_model=Page[TransactionResponse])
+@router.get(
+    '/',
+    response_model=Page[TransactionResponse]
+)
 async def list_transactions(
         *,
         current_user: User = AuthenticatedUser,

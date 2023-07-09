@@ -2,6 +2,7 @@ import typer
 from rich.console import Console
 from rich.table import Table
 from sqlmodel import Session, select
+import pandas as pd
 
 from dundie.models.user import generate_username
 from .config import settings
@@ -91,8 +92,6 @@ def balance_list():
     for header in fields[1:]:
         table.add_column(header, style="red")
 
-
-
     with Session(engine) as session:
         balance_list = session.exec(query)
         for balance in balance_list:
@@ -104,6 +103,7 @@ def balance_list():
             ]
             table.add_row(*_balance)
         Console().print(table)
+
 
 @main.command()
 def transaction(
@@ -140,18 +140,19 @@ def transaction(
 def create_user_from_csv():
     """Create user from csv. NOT IMPLEMENTED YET"""
     pass
+
+
 @main.command()
 def export_user_to_csv(path: str = '.'):
     """Export all user to csv file. NOT IMPLEMENTED YET"""
     with Session(engine) as session:
+        fields = ['email', 'name', 'username', 'dept', 'currency']
         query = select(User.email, User.name, User.username, User.dept, User.currency)
         users = session.exec(query).all()
-        records = [i.dict() for i in users]
-        df = pd.DataFrame.from_records(records)
+        _users = [{field: getattr(user, field) for field in fields} for user in users]
+        df = pd.DataFrame.from_records(_users)
         path = path + '/users.csv'
         df.to_csv(path_or_buf=path, index=False)
-
-
 
 @main.command()
 def export_transaction_to_csv():

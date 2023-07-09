@@ -234,6 +234,7 @@ curl -X 'GET' \
 ```
 
 Logando com um usario sem ser _superuser_. É possível ver todas as transactions, para resolver isso vamos usar filtros !!!!!!
+
 ```bash
 curl -sX 'GET' \
   'http://localhost:8000/transaction/?fresh=false&page=1&size=50' \
@@ -255,21 +256,28 @@ curl -X 'GET' \
 curl -sX 'GET' \
   'http://localhost:8000/user/?show_balance=false' \
   -H 'accept: application/json' \
-  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtaXp1bm8iLCJmcmVzaCI6dHJ1ZSwiZXhwIjoxNjg3MTAzODAxLCJzY29wZSI6ImFjY2Vzc190b2tlbiJ9.yZ6BqVdPZuVFDAhx4snjfogP51nBog3o-8Ycg3xrKhw' | jq
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtaXp1bm8iLCJmcmVzaCI6dHJ1ZSwiZXhwIjoxNjg4OTE4MDk3LCJzY29wZSI6ImFjY2Vzc190b2tlbiJ9.YrJl5sz_7OnT7wgY7JWMaSyGZMDlzW0SfIM41Fa6teM' | jq
 ```
 
 ```bash
 curl -sX 'GET' \
   'http://localhost:8000/user/?fresh=false&show_balance=true' \
   -H 'accept: application/json' \
-  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtaXp1bm8iLCJmcmVzaCI6dHJ1ZSwiZXhwIjoxNjg3MTAzODAxLCJzY29wZSI6ImFjY2Vzc190b2tlbiJ9.yZ6BqVdPZuVFDAhx4snjfogP51nBog3o-8Ycg3xrKhw' | jq
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtaXp1bm8iLCJmcmVzaCI6dHJ1ZSwiZXhwIjoxNjg4OTIwNDA4LCJzY29wZSI6ImFjY2Vzc190b2tlbiJ9.qUZMar9NO2njXnWGU1p6vMjLLrkMsruKXebKphAjCUA' | jq
 ```
 
 ```bash
 curl -sX 'GET' \
   'http://localhost:8000/user/ganso/?fresh=false&show_balance=true' \
   -H 'accept: application/json' \
-  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtaXp1bm8iLCJmcmVzaCI6dHJ1ZSwiZXhwIjoxNjg3MTAzODAxLCJzY29wZSI6ImFjY2Vzc190b2tlbiJ9.yZ6BqVdPZuVFDAhx4snjfogP51nBog3o-8Ycg3xrKhw' | jq
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtaXp1bm8iLCJmcmVzaCI6dHJ1ZSwiZXhwIjoxNjg4OTIyODUyLCJzY29wZSI6ImFjY2Vzc190b2tlbiJ9.GiRf6_0dgza5eWuqvbjKITll0-o8a5gBwjiayqogEaY' | jq
+```
+
+```bash
+curl -sX 'GET' \
+  'http://localhost:8000/user/pam-besly/?fresh=false&show_balance=true' \
+  -H 'accept: application/json' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtaXp1bm8iLCJmcmVzaCI6dHJ1ZSwiZXhwIjoxNjg4OTIyODUyLCJzY29wZSI6ImFjY2Vzc190b2tlbiJ9.GiRf6_0dgza5eWuqvbjKITll0-o8a5gBwjiayqogEaY' | jq
 ```
 
 ### Resentando banco de dados

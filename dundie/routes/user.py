@@ -1,5 +1,5 @@
 from typing import List
-
+from sqlalchemy.orm import aliased
 from fastapi import (
     APIRouter,
     HTTPException,
@@ -21,7 +21,10 @@ from fastapi_pagination import (
 from fastapi_pagination.ext.sqlmodel import paginate
 
 from dundie.db import ActiveSession
-from dundie.models import User
+from dundie.models import (
+    User,
+    Balance,
+)
 from dundie.models.serializers import (
     UserResponse,
     UserRequest,
@@ -40,22 +43,24 @@ router = APIRouter()
 # TODO pagination
 @router.get(
     "/",
-    response_model=List[UserResponse] | List[UserResponseWithBalance],
-    response_model_exclude_unset=True,
+    response_model=Page[UserResponse] | Page[UserResponseWithBalance],
 )
 async def list_user(
         *,
         session: Session = ActiveSession,
+        params: Params = Depends(),
         show_balance_field: bool = ShowBalanceField,
 ):
     """List all users in the database."""
-    users = session.exec(select(User)).all()
-    # TODO pagination
-    if show_balance_field:
-        users = parse_obj_as(List[UserResponseWithBalance], users)
-        return JSONResponse(jsonable_encoder(users))
-    return users
 
+    if show_balance_field:
+        query = select(User, Balance).join(Balance, User.id == Balance.user_id)
+        result = paginate(query=query, session=session, params=params)
+        return result
+
+    query = select(User)
+
+    return paginate(query=query, session=session, params=params)
 
 @router.post("/", response_model=UserRequest, status_code=201, dependencies=[SuperUser])
 async def create_user(*, session: Session = ActiveSession, user: UserRequest):
