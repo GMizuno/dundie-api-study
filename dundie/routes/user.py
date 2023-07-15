@@ -52,17 +52,21 @@ async def list_user(
         show_balance_field: bool = ShowBalanceField,
 ):
     """List all users in the database."""
-
     if show_balance_field:
         query = select(User, Balance).join(Balance, User.id == Balance.user_id)
-        result = paginate(query=query, session=session, params=params)
-        return result
+        return paginate(query=query, session=session, params=params)
 
     query = select(User)
 
     return paginate(query=query, session=session, params=params)
 
-@router.post("/", response_model=UserRequest, status_code=201, dependencies=[SuperUser])
+
+@router.post(
+    "/",
+    response_model=UserRequest,
+    status_code=201,
+    dependencies=[SuperUser]
+)
 async def create_user(*, session: Session = ActiveSession, user: UserRequest):
     """Creates new user"""
     # Podeira usar um if para verificar se o usuário e email já existem

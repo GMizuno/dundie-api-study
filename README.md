@@ -263,22 +263,9 @@ curl -sX 'GET' \
 curl -sX 'GET' \
   'http://localhost:8000/user/?fresh=false&show_balance=true' \
   -H 'accept: application/json' \
-  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtaXp1bm8iLCJmcmVzaCI6dHJ1ZSwiZXhwIjoxNjg4OTIwNDA4LCJzY29wZSI6ImFjY2Vzc190b2tlbiJ9.qUZMar9NO2njXnWGU1p6vMjLLrkMsruKXebKphAjCUA' | jq
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtaXp1bm8iLCJmcmVzaCI6dHJ1ZSwiZXhwIjoxNjg4OTI0NjU2LCJzY29wZSI6ImFjY2Vzc190b2tlbiJ9.YOpzpzGqz83QXInaCJEl-3dSn01CgSdHF4uopI6MoZA' | jq
 ```
 
-```bash
-curl -sX 'GET' \
-  'http://localhost:8000/user/ganso/?fresh=false&show_balance=true' \
-  -H 'accept: application/json' \
-  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtaXp1bm8iLCJmcmVzaCI6dHJ1ZSwiZXhwIjoxNjg4OTIyODUyLCJzY29wZSI6ImFjY2Vzc190b2tlbiJ9.GiRf6_0dgza5eWuqvbjKITll0-o8a5gBwjiayqogEaY' | jq
-```
-
-```bash
-curl -sX 'GET' \
-  'http://localhost:8000/user/pam-besly/?fresh=false&show_balance=true' \
-  -H 'accept: application/json' \
-  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtaXp1bm8iLCJmcmVzaCI6dHJ1ZSwiZXhwIjoxNjg4OTIyODUyLCJzY29wZSI6ImFjY2Vzc190b2tlbiJ9.GiRf6_0dgza5eWuqvbjKITll0-o8a5gBwjiayqogEaY' | jq
-```
 
 ### Resentando banco de dados
 

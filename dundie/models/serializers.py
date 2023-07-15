@@ -101,6 +101,9 @@ class UserResponseWithBalance(UserResponse):
     @root_validator(pre=True)
     def set_balance(cls, values: dict):
         """Sets the balance of the user"""
-        instance = values["_sa_instance_state"].object # Poderia fazer um query com session, mas essa instancia ja tem o dados necessários.
-        values["balance"] = instance.balance
-        return values
+        print(values)
+        balance = values['Balance'].dict()
+        user = values['User'].dict()
+
+        user['balance'] = balance['value']
+        return user

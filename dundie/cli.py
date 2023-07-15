@@ -155,9 +155,17 @@ def export_user_to_csv(path: str = '.'):
         df.to_csv(path_or_buf=path, index=False)
 
 @main.command()
-def export_transaction_to_csv():
+def export_transaction_to_csv(path: str = '.'):
     """Export all transaction to csv file. NOT IMPLEMENTED YET"""
-    pass
+    with Session(engine) as session:
+        fields = ['email', 'name', 'value', 'date']
+        query = select(User.email, User.name, Transaction.value, Transaction.date).\
+            join(User, Transaction.user_id == User.id)
+        transactions = session.exec(query).all()
+        _transaction= [{field: getattr(transaction, field) for field in fields} for transaction in transactions]
+        df = pd.DataFrame.from_records(_transaction)
+        path = path + '/transaction.csv'
+        df.to_csv(path_or_buf=path, index=False)
 
 
 @main.command()
