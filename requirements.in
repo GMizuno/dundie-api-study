@@ -7,8 +7,9 @@ jinja2                     # Templating
 python-jose[cryptography]  # Encrypt
 passlib[bcrypt]            # Hashing
 python-multipart           # Form processing
-psycopg2                   # Database Driver
+psycopg2-binary            # Database Driver
 alembic                    # Database Migrations
 rich                       # Terminal formatting
 fastapi-pagination         # Pagination
 pandas                     # Export to CSV
+rq                         # Task Queue
